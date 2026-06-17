@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vidath Harshitha - Portfolio</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone@7.24.4/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        background: '#050409',
+                        primary: '#17103a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #050409 0%, #11072b 50%, #071536 100%);
+            background-attachment: fixed;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .bg-radial {
+            background: radial-gradient(circle at 50% 20%, rgba(23, 16, 58, 0.8) 0%, transparent 70%);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #050409;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            will-change: opacity, visibility;
+        }
+
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        @keyframes bounce-slow {
+
+            0%,
+            100% {
+                transform: translateY(-25%);
+                animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+            }
+
+            50% {
+                transform: none;
+                animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+            }
+        }
+
+        .animate-bounce-slow {
+            animation: bounce-slow 2s infinite;
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-purple-500/30">
+    <script>
+        window.addEventListener('error', function (e) {
+            document.body.innerHTML += '<div style="position:fixed;top:0;left:0;right:0;background:white;color:red;padding:20px;z-index:9999;font-family:monospace;"><b>Error:</b> ' + e.message + '<br/><b>File:</b> ' + e.filename + '<br/><b>Line:</b> ' + e.lineno + '</div>';
+        });
+    </script>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const FadeInSection = ({ children, className = "" }) => {
+            const [isVisible, setVisible] = useState(false);
+            const domRef = useRef();
+
+            useEffect(() => {
+                const observer = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            setVisible(true);
+                            // Optional: Stop observing once visible
+                            observer.unobserve(domRef.current);
+                        }
+                    });
+                }, {
+                    rootMargin: "0px 0px -50px 0px",
+                    threshold: 0.1
+                });
+
+                if (domRef.current) {
+                    observer.observe(domRef.current);
+                }
+
+                return () => {
+                    if (domRef.current) {
+                        observer.unobserve(domRef.current);
+                    }
+                };
+            }, []);
+
+            return (
+                <div
+                    className={`fade-in-section ${isVisible ? 'is-visible' : ''} ${className}`}
+                    ref={domRef}
+                >
+                    {children}
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [activeSection, setActiveSection] = useState('home');
+
+            const navLinks = [
+                { id: 'home', label: 'Home' },
+                { id: 'about', label: 'About' },
+                { id: 'projects', label: 'Projects' },
+                { id: 'skills', label: 'Skills' },
+                { id: 'certificates', label: 'Certificates' },
+                { id: 'contact', label: 'Contact' },
+            ];
+
+            useEffect(() => {
+                const handleScroll = () => {
+                    const sections = navLinks.map(link => document.getElementById(link.id));
+                    const scrollPosition = window.scrollY + 200; // Offset for navbar
+
+                    for (let i = sections.length - 1; i >= 0; i--) {
+                        const section = sections[i];
+                        if (section && section.offsetTop <= scrollPosition) {
+                            setActiveSection(section.id);
+                            break;
+                        }
+                    }
+                };
+
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            const scrollToTop = (e, id) => {
+                if (id === 'home') {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setActiveSection('home');
+                }
+            };
+
+            return (
+                <div className="relative min-h-screen text-slate-200">
+                    {/* Fixed Navbar */}
+                    <nav className="fixed top-10 left-1/2 -translate-x-1/2 z-50">
+                        <ul className="flex items-center gap-1 sm:gap-2 px-6 py-3 backdrop-blur-xl bg-gray-900/50 border border-gray-800 rounded-full shadow-2xl">
+                            {navLinks.map((link) => (
+                                <li key={link.id}>
+                                    <a
+                                        href={`#${link.id}`}
+                                        onClick={(e) => scrollToTop(e, link.id)}
+                                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${activeSection === link.id
+                                            ? 'bg-white/10 text-white'
+                                            : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                            }`}
+                                    >
+                                        {link.label}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </nav>
+
+                    {/* Main Content */}
+                    <main>
+                        {/* HOME SECTION */}
+                        <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-radial pt-20">
+                            {/* Nebula Background Elements */}
+                            <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-purple-600/10 blur-[120px] rounded-full pointer-events-none"></div>
+                            <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-cyan-600/10 blur-[100px] rounded-full pointer-events-none"></div>
+
+
+
+                            {/* Center Content */}
+                            <div className="relative z-10 flex flex-col items-center text-center max-w-4xl px-4 mt-10">
+
+                                {/* Avatar */}
+                                <div className="relative mb-8 group">
+                                    <div className="absolute inset-0 rounded-full border border-cyan-500/30 scale-110 animate-[spin_10s_linear_infinite]"></div>
+                                    <div className="absolute inset-0 rounded-full border border-purple-500/30 scale-125 animate-[spin_15s_linear_infinite_reverse]"></div>
+                                    <div className="absolute inset-0 rounded-full border border-fuchsia-500/20 scale-[1.4] animate-[spin_20s_linear_infinite]"></div>
+                                    <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-2 border-indigo-500/50 shadow-[0_0_30px_rgba(79,70,229,0.3)] bg-gray-800 flex items-center justify-center">
+                                        <img src="vidath.jpeg" alt="Vidath Harshitha" className="w-full h-full object-cover" />
+                                    </div>
+                                </div>
+
+                                <h2 className="text-cyan-400 font-semibold tracking-[0.3em] text-xs sm:text-sm mb-4 uppercase">
+                                    Welcome to my universe
+                                </h2>
+
+                                <h1 className="text-5xl sm:text-7xl md:text-8xl font-extrabold mb-6 bg-gradient-to-r from-fuchsia-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent pb-2">
+                                    Vidath Harshitha
+                                </h1>
+
+                                <p className="text-lg md:text-xl text-gray-300 mb-4 font-medium">
+                                    Information Technology Undergraduate | Full stack Developer | Software Enthusiast
+                                </p>
+
+                                <p className="text-gray-400 max-w-2xl text-sm md:text-base leading-relaxed mb-10">
+                                    I build modern web experiences, support technical operations, and solve real-world IT problems through software, troubleshooting, and client-focused digital solutions.
+                                </p>
+
+                                {/* Scroll Down Indicator & Download Resume Button */}
+                                <div className="flex flex-col items-center gap-6 mt-4">
+                                    <div className="flex flex-col items-center opacity-50 hover:opacity-100 transition-opacity cursor-pointer" onClick={() => document.getElementById('about').scrollIntoView({ behavior: 'smooth' })}>
+                                        <div className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center p-1 mb-2">
+                                            <div className="w-1 h-2 bg-cyan-400 rounded-full animate-bounce-slow"></div>
+                                        </div>
+                                        <span className="text-[10px] uppercase tracking-widest text-gray-400">Scroll Down</span>
+                                    </div>
+
+                                    <a href="resume.pdf" download="Vidath_Harshitha_Resume.pdf" className="px-6 py-2.5 rounded-xl font-medium text-white bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-sm transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 shadow-lg text-sm">
+                                        📄 Download Resume
+                                    </a>
+                                </div>
+                            </div>
+
+
+
+
+                        </section>
+
+                        {/* ABOUT SECTION */}
+                        <section id="about" className="min-h-screen py-24 flex items-center justify-center px-4 relative z-10">
+                            <FadeInSection className="max-w-4xl w-full">
+                                <h2 className="text-3xl md:text-5xl font-bold mb-10 text-center">
+                                    About <span className="text-purple-400">Me</span>
+                                </h2>
+                                <div className="backdrop-blur-xl bg-gray-900/40 border border-gray-800 rounded-3xl p-8 md:p-12 shadow-2xl">
+                                    <div className="flex flex-col md:flex-row gap-10 items-center">
+                                        <div className="w-full md:w-2/3 space-y-6 text-gray-300 leading-relaxed">
+                                            <p>
+                                                Hello! I'm Vidath Harshitha, a passionate 3rd year Information Technology undergraduate with a deep interest in Full stack Development and IT operations. My journey in tech started with a curiosity about how things work under the hood, which quickly grew into a drive to create elegant, efficient solutions to complex problems.
+                                            </p>
+                                            <p>
+                                                I specialize in building modern web applications with a focus on intuitive user experiences and robust backend architecture. When I'm not coding, you can find me exploring the latest tech trends, optimizing systems, or contributing to open-source projects.
+                                            </p>
+                                            <p>
+                                                My goal is to leverage my skills to build impactful software that makes a difference, constantly learning and adapting in this rapidly evolving digital landscape.
+                                            </p>
+                                        </div>
+                                        <div className="w-full md:w-1/3 flex justify-center mt-8 md:mt-0">
+                                            <div className="w-full max-w-sm rounded-2xl overflow-hidden border border-gray-700/50 shadow-xl">
+                                                <img src="vidath_dean.jpeg" alt="Vidath Dean" className="w-full h-auto" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </FadeInSection>
+                        </section>
+
+                        {/* PROJECTS SECTION */}
+                        <section id="projects" className="min-h-screen py-24 flex items-center justify-center px-4">
+                            <FadeInSection className="max-w-6xl w-full">
+                                <h2 className="text-3xl md:text-5xl font-bold mb-16 text-center">
+                                    Featured <span className="text-cyan-400">Projects</span>
+                                </h2>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                    {[
+                                        {
+                                            id: 1,
+                                            title: "Pet-Pulse",
+                                            description: "Developed a comprehensive web-based platform that enables pet owners to maintain digital profiles with active medical tags and book context-aware appointments. It features a secure administrative dashboard that handles dynamic appointment lifecycles, doctor assignment filtering by specialty, and backend conflict-checking logic to manage real-time doctor availability and eliminate double-bookings",
+                                            tags: ["React", "Node.js", "Tailwind", "Next.js"],
+                                            sourceLink: "https://github.com/Harshavidath12/Pet-Pulse",
+                                            liveLink: "https://pet-pulse-6shj.onrender.com/",
+                                            image: "project1.jpg"
+                                        },
+                                        {
+                                            id: 2,
+                                            title: "NJ Watches",
+                                            description: "E-Commerce Platform for premium watches, featuring dynamic product filtering, secure payment gateway integration, and an intuitive user interface with a interactive Inventory Management System.",
+                                            tags: ["React", "Node.js", "Tailwind", "Next.js"],
+                                            sourceLink: "https://github.com/Harshavidath12/New-Jayarathna-watches",
+                                            liveLink: "https://new-jayarathna-watches.onrender.com/",
+                                            image: "project2.jpg"
+                                        },
+                                        {
+                                            id: 3,
+                                            title: "AgriTech",
+                                            description: "Designed to centralize and automate agricultural machinery rentals for smallholder farmers.Integrated with the Google Maps API, the system features a geospatial search engine for radiusbased equipment filtering, a conflict-free booking engine with automated date-range validations, secure checkout pipeline for upfront security deposits, and a role-based reactive notification system",
+                                            tags: ["React", "Node.js", "Tailwind", "Next.js"],
+                                            sourceLink: "https://github.com/Harshavidath12/AgriTech",
+                                            liveLink: null,
+                                            image: "project3.jpg"
+                                        },
+                                        {
+                                            id: 4,
+                                            title: "Acadome",
+                                            description: "Developed an advanced housing search system using Google Maps API, enabling real-time location visualization and map-based filtering. Designed and implemented a smart preference-based roommate matching algorithm to help university students find compatible roommates based on their personal preferences and requirements. Led the development and coordination of these core functionalities as the group leader.",
+                                            tags: ["React", "Node.js", "Tailwind", "MongoDB"],
+                                            sourceLink: "https://github.com/Harshavidath12/Acadome",
+                                            liveLink: null,
+                                            image: "project4.jpg"
+                                        },
+                                        {
+                                            id: 5,
+                                            title: "SmartCampus",
+                                            description: "As the group leader, I designed and developed the authentication and authorization module of the campus facility management system, implementing secure OAuth-based Google Sign-In and role-based access control to ensure protected user access. Additionally, I developed the real-time notification handling component, enabling users to receive instant updates regarding reservations, maintenance requests, and system activities.",
+                                            tags: ["React", "Node.js", "Tailwind", "PostgreSQL"],
+                                            sourceLink: "https://github.com/Harshavidath12/it3030-paf-2026-smart-campus-group137",
+                                            liveLink: null,
+                                            image: "project5.jpg"
+                                        },
+                                        {
+                                            id: 6,
+                                            title: "D&S Creations",
+                                            description: "Led the development of key operational components in a MERN-based media rental and advertising management platform. Developed the LED board management system for handling digital advertising assets, including status tracking and management workflows. Additionally, implemented a dynamic inventory management module to monitor asset availability, maintain inventory records, and optimize resource allocation.",
+                                            tags: ["React", "Node.js", "Tailwind", "MongoDB"],
+                                            sourceLink: "https://github.com/Harshavidath12/D-and-S-Creations",
+                                            liveLink: null,
+                                            image: "project6.jpg"
+                                        }
+                                    ].map((project) => (
+                                        <div key={project.id} className="group backdrop-blur-md bg-white/[0.02] border border-white/10 rounded-2xl overflow-hidden hover:bg-white/[0.04] hover:border-purple-500/50 transition-all duration-500 shadow-lg hover:shadow-purple-500/20 flex flex-col">
+                                            <div className="h-48 bg-gray-800/50 relative overflow-hidden">
+                                                <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-cyan-600/20 group-hover:scale-110 transition-transform duration-700 z-10 opacity-60"></div>
+                                                {project.image ? (
+                                                    <img src={project.image} alt={project.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                                                ) : (
+                                                    <div className="absolute inset-0 flex items-center justify-center">
+                                                        <svg className="w-12 h-12 text-gray-600 group-hover:text-cyan-400 transition-colors duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="p-6 flex-1 flex flex-col">
+                                                <h3 className="text-xl font-bold mb-2 text-white group-hover:text-purple-400 transition-colors">{project.title}</h3>
+                                                <p className="text-gray-400 text-sm mb-6 flex-1">{project.description}</p>
+                                                <div className="flex flex-wrap gap-2 mb-6">
+                                                    {project.tags.map((tag, i) => (
+                                                        <span key={i} className={`text-[10px] uppercase tracking-wider bg-white/5 border border-white/10 px-2 py-1 rounded ${i === 0 ? 'text-cyan-300' : i === 1 ? 'text-purple-300' : 'text-gray-300'}`}>{tag}</span>
+                                                    ))}
+                                                </div>
+                                                <div className="flex flex-col gap-3 mt-auto">
+                                                    <a href={project.sourceLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-sm font-medium text-gray-300 hover:text-white transition-colors group/link w-fit">
+                                                        View Source code
+                                                        <svg className="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                                                    </a>
+                                                    {project.liveLink && (
+                                                        <a href={project.liveLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-sm font-medium text-cyan-400 hover:text-cyan-300 transition-colors group/link w-fit">
+                                                            Watch Live
+                                                            <svg className="w-4 h-4 ml-2 group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                                        </a>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </FadeInSection>
+                        </section>
+
+                        {/* SKILLS SECTION */}
+                        <section id="skills" className="min-h-screen py-24 flex items-center justify-center px-4 relative">
+                            <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[500px] bg-purple-900/5 blur-[150px] pointer-events-none"></div>
+
+                            <FadeInSection className="max-w-4xl w-full relative z-10">
+                                <h2 className="text-3xl md:text-5xl font-bold mb-16 text-center">
+                                    Technical <span className="text-fuchsia-400">Arsenal</span>
+                                </h2>
+
+                                <div className="space-y-12">
+                                    {[
+                                        { category: "Frontend", skills: ["React", "JavaScript (ES6+)", "Tailwind CSS", "HTML5", "CSS3", "Next.js", "TypeScript"] },
+                                        { category: "Backend & IT Ops", skills: ["Node.js", "Express", "Python", "SQL", "MongoDB", "Linux/Unix", "Shell Scripting"] },
+                                        { category: "Tools & Other", skills: ["Git", "GitHub", "AWS", "Figma", "Troubleshooting", "Networking"] }
+                                    ].map((group, idx) => (
+                                        <div key={idx} className="backdrop-blur-sm bg-gray-900/20 border border-gray-800 rounded-2xl p-6 md:p-8">
+                                            <h3 className="text-lg font-semibold text-gray-300 mb-6">{group.category}</h3>
+                                            <div className="flex flex-wrap gap-3">
+                                                {group.skills.map((skill, i) => (
+                                                    <div
+                                                        key={i}
+                                                        className="bg-white/5 border border-white/10 px-5 py-2 rounded-full text-sm font-medium hover:bg-white/10 hover:border-cyan-500/50 hover:text-cyan-300 transition-all duration-300 cursor-default"
+                                                    >
+                                                        {skill}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </FadeInSection>
+                        </section>
+
+                        {/* CERTIFICATES SECTION */}
+                        <section id="certificates" className="min-h-screen py-24 flex items-center justify-center px-4 relative z-10">
+                            <FadeInSection className="max-w-5xl w-full">
+                                <h2 className="text-3xl md:text-5xl font-bold mb-16 text-center">
+                                    My <span className="text-purple-400">Certificates</span>
+                                </h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                                    <div className="backdrop-blur-md bg-white/[0.02] border border-white/10 rounded-2xl overflow-hidden hover:border-cyan-500/50 transition-all duration-500 shadow-lg hover:shadow-cyan-500/20 group">
+                                        <div className="relative aspect-[4/3] overflow-hidden bg-gray-900/50 flex items-center justify-center p-4">
+                                            <img src="mongoDB.jpg" alt="MongoDB Certificate" className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" />
+                                        </div>
+                                        <div className="p-6 border-t border-white/10 bg-gray-900/40">
+                                            <h3 className="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors">MongoDB Certification</h3>
+                                        </div>
+                                    </div>
+                                    <div className="backdrop-blur-md bg-white/[0.02] border border-white/10 rounded-2xl overflow-hidden hover:border-purple-500/50 transition-all duration-500 shadow-lg hover:shadow-purple-500/20 group">
+                                        <div className="relative aspect-[4/3] overflow-hidden bg-gray-900/50 flex items-center justify-center p-4">
+                                            <img src="deans_list.jpg" alt="Dean's List Certificate" className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" />
+                                        </div>
+                                        <div className="p-6 border-t border-white/10 bg-gray-900/40">
+                                            <h3 className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors">Dean's List Award</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </FadeInSection>
+                        </section>
+
+                        {/* CONTACT SECTION */}
+                        <section id="contact" className="min-h-[80vh] py-24 flex flex-col items-center justify-center px-4 relative border-t border-gray-800/50 bg-gradient-to-b from-transparent to-[#020104]">
+                            <FadeInSection className="max-w-3xl w-full text-center">
+                                <h2 className="text-3xl md:text-5xl font-bold mb-6">
+                                    Ready to Build <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">Something Amazing?</span>
+                                </h2>
+                                <p className="text-gray-400 mb-12 text-lg">
+                                    I'm currently looking for new opportunities. Whether you have a question, a project idea, or just want to say hi, my inbox is always open.
+                                </p>
+
+                                <a
+                                    href="mailto:harshithavidath@gmail.com"
+                                    className="inline-block px-10 py-5 rounded-2xl text-xl font-bold text-white bg-white/5 border border-white/10 hover:bg-white/10 hover:border-purple-500/50 backdrop-blur-md transition-all duration-500 transform hover:-translate-y-1 hover:shadow-[0_10px_40px_-10px_rgba(168,85,247,0.4)] relative group overflow-hidden"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-cyan-600/20 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-in-out"></div>
+                                    <span className="relative z-10">Get In Touch</span>
+                                </a>
+
+                                {/* Social Links */}
+                                <div className="flex flex-wrap justify-center gap-4 mt-8">
+                                    <a href="mailto:harshithavidath@gmail.com" className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-base font-bold text-white bg-white/5 border border-white/10 hover:bg-white/10 hover:border-yellow-500/50 backdrop-blur-md transition-all duration-500 transform hover:-translate-y-1 hover:shadow-[0_10px_40px_-10px_rgba(234,179,8,0.4)] relative group overflow-hidden">
+                                        <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-500 ease-in-out"></div>
+                                        <svg className="w-5 h-5 relative z-10 text-yellow-400 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" /></svg>
+                                        <span className="relative z-10">Gmail</span>
+                                    </a>
+
+                                    <a href="https://github.com/Harshavidath12" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-base font-bold text-white bg-white/5 border border-white/10 hover:bg-white/10 hover:border-purple-500/50 backdrop-blur-md transition-all duration-500 transform hover:-translate-y-1 hover:shadow-[0_10px_40px_-10px_rgba(168,85,247,0.4)] relative group overflow-hidden">
+                                        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-fuchsia-600/20 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-500 ease-in-out"></div>
+                                        <svg className="w-5 h-5 relative z-10 text-purple-400 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" /></svg>
+                                        <span className="relative z-10">GitHub</span>
+                                    </a>
+
+                                    <a href="https://www.linkedin.com/in/vidath-harshitha-572332395/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-base font-bold text-white bg-white/5 border border-white/10 hover:bg-white/10 hover:border-blue-500/50 backdrop-blur-md transition-all duration-500 transform hover:-translate-y-1 hover:shadow-[0_10px_40px_-10px_rgba(59,130,246,0.4)] relative group overflow-hidden">
+                                        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-500 ease-in-out"></div>
+                                        <svg className="w-5 h-5 relative z-10 text-blue-400 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" /></svg>
+                                        <span className="relative z-10">LinkedIn</span>
+                                    </a>
+
+                                    <a href="https://www.instagram.com/vidath_18/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-base font-bold text-white bg-white/5 border border-white/10 hover:bg-white/10 hover:border-pink-500/50 backdrop-blur-md transition-all duration-500 transform hover:-translate-y-1 hover:shadow-[0_10px_40px_-10px_rgba(236,72,153,0.4)] relative group overflow-hidden">
+                                        <div className="absolute inset-0 bg-gradient-to-r from-pink-600/20 to-rose-600/20 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-500 ease-in-out"></div>
+                                        <svg className="w-5 h-5 relative z-10 text-pink-400 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>
+                                        <span className="relative z-10">Instagram</span>
+                                    </a>
+
+                                    <a href="tel:+94706625728" className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-base font-bold text-white bg-white/5 border border-white/10 hover:bg-white/10 hover:border-emerald-500/50 backdrop-blur-md transition-all duration-500 transform hover:-translate-y-1 hover:shadow-[0_10px_40px_-10px_rgba(16,185,129,0.4)] relative group overflow-hidden">
+                                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/20 to-teal-600/20 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-500 ease-in-out"></div>
+                                        <svg className="w-5 h-5 relative z-10 text-emerald-400 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z" /></svg>
+                                        <span className="relative z-10">+94 70 662 5728</span>
+                                    </a>
+                                </div>
+
+                                <div className="mt-24 pt-8 border-t border-gray-800/50 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-500 text-sm">
+                                    <p>© {new Date().getFullYear()} Vidath Harshitha. All rights reserved.</p>
+                                </div>
+                            </FadeInSection>
+                        </section>
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>
