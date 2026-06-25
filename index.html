@@ -327,7 +327,7 @@
                                             id: 4,
                                             title: "Acadome",
                                             description: "Developed an advanced housing search system using Google Maps API, enabling real-time location visualization and map-based filtering. Designed and implemented a smart preference-based roommate matching algorithm to help university students find compatible roommates based on their personal preferences and requirements. Led the development and coordination of these core functionalities as the group leader.",
-                                            tags: ["React", "Node.js", "Tailwind", "MongoDB"],
+                                            tags: ["React", "Node.js", "Tailwind CSS", "MongoDB"],
                                             sourceLink: "https://github.com/Harshavidath12/Acadome",
                                             liveLink: null,
                                             image: "project4.jpg"
@@ -336,7 +336,7 @@
                                             id: 5,
                                             title: "SmartCampus",
                                             description: "As the group leader, I designed and developed the authentication and authorization module of the campus facility management system, implementing secure OAuth-based Google Sign-In and role-based access control to ensure protected user access. Additionally, I developed the real-time notification handling component, enabling users to receive instant updates regarding reservations, maintenance requests, and system activities.",
-                                            tags: ["React", "Node.js", "Tailwind", "PostgreSQL"],
+                                            tags: ["React", "Node.js", "Tailwind CSS", "PostgreSQL"],
                                             sourceLink: "https://github.com/Harshavidath12/it3030-paf-2026-smart-campus-group137",
                                             liveLink: null,
                                             image: "project5.jpg"
@@ -345,10 +345,19 @@
                                             id: 6,
                                             title: "D&S Creations",
                                             description: "Led the development of key operational components in a MERN-based media rental and advertising management platform. Developed the LED board management system for handling digital advertising assets, including status tracking and management workflows. Additionally, implemented a dynamic inventory management module to monitor asset availability, maintain inventory records, and optimize resource allocation.",
-                                            tags: ["React", "Node.js", "Tailwind", "MongoDB"],
+                                            tags: ["React", "Node.js", "Tailwind CSS", "MongoDB"],
                                             sourceLink: "https://github.com/Harshavidath12/D-and-S-Creations",
                                             liveLink: null,
                                             image: "project6.jpg"
+                                        },
+                                        {
+                                            id: 7,
+                                            title: "Simple Task Management Dashboard",
+                                            description: "A real-time Task Management Dashboard using a Laravel backend and a MySQL database. Utilizing Alpine.js for lightweight frontend reactivity, the platform delivers fluid, single-page interactivity—such as instant task creation modals and live filtering—completely without page refreshes.",
+                                            tags: ["Alpine.js", "Laravel", "MySQL", "Tailwind CSS"],
+                                            sourceLink: "https://github.com/Harshavidath12/task-management-dashboard",
+                                            liveLink: null,
+                                            image: "project7.jpg"
                                         }
                                     ].map((project) => (
                                         <div key={project.id} className="group backdrop-blur-md bg-white/[0.02] border border-white/10 rounded-2xl overflow-hidden hover:bg-white/[0.04] hover:border-purple-500/50 transition-all duration-500 shadow-lg hover:shadow-purple-500/20 flex flex-col">
@@ -395,13 +404,13 @@
 
                             <FadeInSection className="max-w-4xl w-full relative z-10">
                                 <h2 className="text-3xl md:text-5xl font-bold mb-16 text-center">
-                                    Technical <span className="text-fuchsia-400">Arsenal</span>
+                                    Technical <span className="text-fuchsia-400">Skills</span>
                                 </h2>
 
                                 <div className="space-y-12">
                                     {[
-                                        { category: "Frontend", skills: ["React", "JavaScript (ES6+)", "Tailwind CSS", "HTML5", "CSS3", "Next.js", "TypeScript"] },
-                                        { category: "Backend & IT Ops", skills: ["Node.js", "Express", "Python", "SQL", "MongoDB", "Linux/Unix", "Shell Scripting"] },
+                                        { category: "Frontend", skills: ["React", "JavaScript (ES6+)", "Tailwind CSS", "Alpine.JS", "CSS3", "Next.js", "TypeScript"] },
+                                        { category: "Backend & IT Ops", skills: ["Node.js", "Express", "Python", "SQL", "MySQL", "MongoDB", "Linux/Unix", "Laravel"] },
                                         { category: "Tools & Other", skills: ["Git", "GitHub", "AWS", "Figma", "Troubleshooting", "Networking"] }
                                     ].map((group, idx) => (
                                         <div key={idx} className="backdrop-blur-sm bg-gray-900/20 border border-gray-800 rounded-2xl p-6 md:p-8">
